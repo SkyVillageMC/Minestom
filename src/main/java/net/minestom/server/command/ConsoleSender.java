@@ -4,13 +4,12 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.minestom.server.log.Logger;
 import net.minestom.server.permission.Permission;
 import net.minestom.server.tag.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.NBTCompound;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -20,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class ConsoleSender implements CommandSender {
     private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleSender.class);
+    private static final Logger LOGGER = new Logger("ConsoleSender");
 
     private final Set<Permission> permissions = new CopyOnWriteArraySet<>();
     private final NBTCompound nbtCompound = new NBTCompound();

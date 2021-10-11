@@ -78,7 +78,8 @@ public class ChunkDataPacket implements ServerPacket {
         } else {
             writer.writeVarInt(biomes.length);
             for (Biome biome : biomes) {
-                writer.writeVarInt(biome.getId());
+                if (biome == null) writer.writeVarInt(1);
+                else writer.writeVarInt(biome.getId());
             }
         }
 

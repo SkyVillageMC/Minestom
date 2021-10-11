@@ -5,6 +5,7 @@ import net.minestom.server.exception.ExceptionManager;
 import net.minestom.server.instance.block.Block;
 import net.minestom.server.instance.block.BlockHandler;
 import net.minestom.server.instance.block.BlockManager;
+import net.minestom.server.log.Logger;
 import net.minestom.server.tag.Tag;
 import net.minestom.server.utils.async.AsyncUtils;
 import net.minestom.server.world.biomes.Biome;
@@ -13,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.mca.*;
 import org.jglrxavpok.hephaistos.nbt.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AnvilLoader implements IChunkLoader {
-    private final static Logger LOGGER = LoggerFactory.getLogger(AnvilLoader.class);
+    private final static Logger LOGGER = new Logger("AnvilLoader");
     private static final BlockManager BLOCK_MANAGER = MinecraftServer.getBlockManager();
     private static final BiomeManager BIOME_MANAGER = MinecraftServer.getBiomeManager();
     private static final ExceptionManager EXCEPTION_MANAGER = MinecraftServer.getExceptionManager();
@@ -66,7 +65,7 @@ public class AnvilLoader implements IChunkLoader {
 
     @Override
     public @NotNull CompletableFuture<@Nullable Chunk> loadChunk(@NotNull Instance instance, int chunkX, int chunkZ) {
-        LOGGER.debug("Attempt loading at {} {}", chunkX, chunkZ);
+        //LOGGER.debug("Attempt loading at {} {}", chunkX, chunkZ);
         if (!Files.exists(path)) {
             // No world folder
             return CompletableFuture.completedFuture(null);

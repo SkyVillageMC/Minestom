@@ -1,10 +1,9 @@
 package net.minestom.server.storage;
 
+import net.minestom.server.log.Logger;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +17,7 @@ import java.util.function.Supplier;
  */
 public final class StorageManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StorageManager.class);
+    private static final Logger LOGGER = new Logger("StorageManager");
 
     private Supplier<StorageSystem> defaultStorageSystemSupplier = null;
 

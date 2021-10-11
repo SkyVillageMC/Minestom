@@ -2,19 +2,18 @@ package net.minestom.server.network;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Player;
+import net.minestom.server.log.Logger;
 import net.minestom.server.network.packet.client.ClientPlayPacket;
 import net.minestom.server.network.packet.client.ClientPreplayPacket;
 import net.minestom.server.network.packet.client.handler.ClientLoginPacketsHandler;
 import net.minestom.server.network.packet.client.handler.ClientPlayPacketsHandler;
 import net.minestom.server.network.packet.client.handler.ClientStatusPacketsHandler;
 import net.minestom.server.network.packet.client.handshake.HandshakePacket;
-import net.minestom.server.network.player.PlayerSocketConnection;
 import net.minestom.server.network.player.PlayerConnection;
+import net.minestom.server.network.player.PlayerSocketConnection;
 import net.minestom.server.utils.binary.BinaryReader;
 import net.minestom.server.utils.binary.Readable;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 
@@ -29,7 +28,7 @@ import java.nio.ByteBuffer;
  * the same meaning as it is a login or play packet).
  */
 public final class PacketProcessor {
-    private final static Logger LOGGER = LoggerFactory.getLogger(PacketProcessor.class);
+    private final static Logger LOGGER = new Logger("PacketProcessor");
 
     // Protocols state
     private final ClientStatusPacketsHandler statusPacketsHandler;

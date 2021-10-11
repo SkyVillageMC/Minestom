@@ -101,7 +101,7 @@ public class SerializableDataImpl extends SerializableData {
         // Get the current max index, it supposes that the index keep being incremented by 1
         short lastIndex = (short) typeToIndexMap.size();
 
-        // Main buffer containing the data
+        // net.minestom.server.Main buffer containing the data
         BinaryWriter binaryWriter = new BinaryWriter();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
             final String key = entry.getKey();

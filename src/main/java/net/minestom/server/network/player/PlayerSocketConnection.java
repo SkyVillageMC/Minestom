@@ -6,6 +6,7 @@ import net.minestom.server.adventure.MinestomAdventure;
 import net.minestom.server.entity.Player;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.extras.mojangAuth.MojangCrypt;
+import net.minestom.server.log.Logger;
 import net.minestom.server.network.ConnectionState;
 import net.minestom.server.network.PacketProcessor;
 import net.minestom.server.network.packet.FramedPacket;
@@ -21,8 +22,6 @@ import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -49,7 +48,7 @@ import java.util.zip.Inflater;
  */
 @ApiStatus.Internal
 public class PlayerSocketConnection extends PlayerConnection {
-    private final static Logger LOGGER = LoggerFactory.getLogger(PlayerSocketConnection.class);
+    private final static Logger LOGGER = new Logger(PlayerSocketConnection.class);
 
     private final Worker worker;
     private final SocketChannel channel;

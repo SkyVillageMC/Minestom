@@ -25,7 +25,6 @@ public class MainDemo {
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
         // Set the ChunkGenerator
         instanceContainer.setChunkGenerator(new GeneratorDemo());
-
         // Add an event callback to specify the spawning instance (and the spawn position)
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
         globalEventHandler.addListener(PlayerLoginEvent.class, event -> {

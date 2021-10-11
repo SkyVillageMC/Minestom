@@ -1,14 +1,13 @@
 package net.minestom.server.utils.debug;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minestom.server.log.Logger;
 
 /**
  * Utils class useful for debugging purpose.
  */
 public final class DebugUtils {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(DebugUtils.class);
+    public final static Logger LOGGER = new Logger(DebugUtils.class.getName());
 
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 

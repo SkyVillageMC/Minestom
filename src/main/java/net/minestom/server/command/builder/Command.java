@@ -8,12 +8,11 @@ import net.minestom.server.command.builder.arguments.ArgumentLiteral;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.command.builder.arguments.ArgumentWord;
 import net.minestom.server.command.builder.condition.CommandCondition;
+import net.minestom.server.log.Logger;
 import net.minestom.server.utils.StringUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -44,7 +43,7 @@ import java.util.stream.Stream;
  */
 public class Command {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(Command.class);
+    public final static Logger LOGGER = new Logger("Command");
 
     private final String name;
     private final String[] aliases;

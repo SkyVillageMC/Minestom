@@ -16,20 +16,19 @@ import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
 import net.minestom.server.item.attribute.AttributeSlot;
 import net.minestom.server.item.attribute.ItemAttribute;
+import net.minestom.server.log.Logger;
 import net.minestom.server.utils.binary.BinaryReader;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jglrxavpok.hephaistos.nbt.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
 // for lack of a better name
 public final class NBTUtils {
-    private final static Logger LOGGER = LoggerFactory.getLogger(NBTUtils.class);
+    private final static Logger LOGGER = new Logger(NBTUtils.class.getName());
 
     /**
      * An Adventure codec to convert between NBT and SNBT.

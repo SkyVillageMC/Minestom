@@ -9,13 +9,12 @@ import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.extras.selfmodification.MinestomExtensionClassLoader;
 import net.minestom.server.extras.selfmodification.MinestomRootClassLoader;
+import net.minestom.server.log.Logger;
 import net.minestom.server.ping.ResponseDataConsumer;
 import net.minestom.server.utils.time.TimeUnit;
 import net.minestom.server.utils.validate.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.throwables.MixinError;
 import org.spongepowered.asm.mixin.throwables.MixinException;
@@ -36,7 +35,7 @@ public class ExtensionManager {
 
     public final static String DISABLE_EARLY_LOAD_SYSTEM_KEY = "minestom.extension.disable_early_load";
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(ExtensionManager.class);
+    public final static Logger LOGGER = new Logger("ExtensionManager");
 
     public final static String INDEV_CLASSES_FOLDER = "minestom.extension.indevfolder.classes";
     public final static String INDEV_RESOURCES_FOLDER = "minestom.extension.indevfolder.resources";
@@ -52,7 +51,7 @@ public class ExtensionManager {
     private boolean loaded;
 
     // Option
-    private boolean loadOnStartup = true;
+    private boolean loadOnStartup = false;
 
     public ExtensionManager() {
     }
@@ -226,7 +225,7 @@ public class ExtensionManager {
         try {
             extensionClass = jarClass.asSubclass(Extension.class);
         } catch (ClassCastException e) {
-            LOGGER.error("Main class '{}' in '{}' does not extend the 'Extension' superclass.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' does not extend the 'Extension' superclass.", mainClass, extensionName, e);
             return null;
         }
 
@@ -236,14 +235,14 @@ public class ExtensionManager {
             // Let's just make it accessible, plugin creators don't have to make this public.
             constructor.setAccessible(true);
         } catch (NoSuchMethodException e) {
-            LOGGER.error("Main class '{}' in '{}' does not define a no-args constructor.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' does not define a no-args constructor.", mainClass, extensionName, e);
             return null;
         }
         Extension extension = null;
         try {
             extension = constructor.newInstance();
         } catch (InstantiationException e) {
-            LOGGER.error("Main class '{}' in '{}' cannot be an abstract class.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' cannot be an abstract class.", mainClass, extensionName, e);
             return null;
         } catch (IllegalAccessException ignored) {
             // We made it accessible, should not occur
@@ -265,7 +264,7 @@ public class ExtensionManager {
         } catch (IllegalAccessException e) {
             // We made it accessible, should not occur
         } catch (NoSuchFieldException e) {
-            LOGGER.error("Main class '{}' in '{}' has no description field.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' has no description field.", mainClass, extensionName, e);
             return null;
         }
 
@@ -273,13 +272,13 @@ public class ExtensionManager {
         try {
             Field loggerField = Extension.class.getDeclaredField("logger");
             loggerField.setAccessible(true);
-            loggerField.set(extension, LoggerFactory.getLogger(extensionClass));
+            loggerField.set(extension, new Logger(extensionClass.getName()));
         } catch (IllegalAccessException e) {
             // We made it accessible, should not occur
             MinecraftServer.getExceptionManager().handleException(e);
         } catch (NoSuchFieldException e) {
             // This should also not occur (unless someone changed the logger in Extension superclass).
-            LOGGER.error("Main class '{}' in '{}' has no logger field.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' has no logger field.", mainClass, extensionName, e);
         }
 
         // Set event node
@@ -295,7 +294,7 @@ public class ExtensionManager {
             MinecraftServer.getExceptionManager().handleException(e);
         } catch (NoSuchFieldException e) {
             // This should also not occur
-            LOGGER.error("Main class '{}' in '{}' has no event node field.", mainClass, extensionName, e);
+            LOGGER.error("net.minestom.server.Main class '{}' in '{}' has no event node field.", mainClass, extensionName, e);
         }
 
         // add dependents to pre-existing extensions, so that they can easily be found during reloading
@@ -557,13 +556,13 @@ public class ExtensionManager {
                 for (String artifact : externalDependencies.artifacts) {
                     var resolved = getter.get(artifact, dependenciesFolder);
                     addDependencyFile(resolved, discoveredExtension);
-                    LOGGER.trace("Dependency of extension {}: {}", discoveredExtension.getName(), resolved);
+                    //LOGGER.trace("Dependency of extension {}: {}", discoveredExtension.getName(), resolved);
                 }
 
                 for (String dependencyName : discoveredExtension.getDependencies()) {
                     var resolved = getter.get(dependencyName, dependenciesFolder);
                     addDependencyFile(resolved, discoveredExtension);
-                    LOGGER.trace("Dependency of extension {}: {}", discoveredExtension.getName(), resolved);
+                    //LOGGER.trace("Dependency of extension {}: {}", discoveredExtension.getName(), resolved);
                 }
             } catch (Exception e) {
                 discoveredExtension.loadStatus = DiscoveredExtension.LoadStatus.MISSING_DEPENDENCIES;
@@ -577,15 +576,15 @@ public class ExtensionManager {
     private void addDependencyFile(@NotNull ResolvedDependency dependency, @NotNull DiscoveredExtension extension) {
         URL location = dependency.getContentsLocation();
         extension.files.add(location);
-        LOGGER.trace("Added dependency {} to extension {} classpath", location.toExternalForm(), extension.getName());
+        //LOGGER.trace("Added dependency {} to extension {} classpath", location.toExternalForm(), extension.getName());
 
         // recurse to add full dependency tree
         if (!dependency.getSubdependencies().isEmpty()) {
-            LOGGER.trace("Dependency {} has subdependencies, adding...", location.toExternalForm());
+            //LOGGER.trace("Dependency {} has subdependencies, adding...", location.toExternalForm());
             for (ResolvedDependency sub : dependency.getSubdependencies()) {
                 addDependencyFile(sub, extension);
             }
-            LOGGER.trace("Dependency {} has had its subdependencies added.", location.toExternalForm());
+            //LOGGER.trace("Dependency {} has had its subdependencies added.", location.toExternalForm());
         }
     }
 

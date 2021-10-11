@@ -1,7 +1,6 @@
 package net.minestom.server.extras.selfmodification;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minestom.server.log.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +13,11 @@ public class MinestomExtensionClassLoader extends HierarchyClassLoader {
     private final MinestomRootClassLoader root;
 
     /**
-     * Main of the main class of the extension linked to this classloader
+     * net.minestom.server.Main of the main class of the extension linked to this classloader
      */
     private final String mainClassName;
 
-    private final Logger logger = LoggerFactory.getLogger(MinestomExtensionClassLoader.class);
+    private final Logger logger = new Logger(MinestomExtensionClassLoader.class);
 
     public MinestomExtensionClassLoader(String extensionName, String mainClassName, URL[] urls, MinestomRootClassLoader root) {
         super(extensionName, urls, root);

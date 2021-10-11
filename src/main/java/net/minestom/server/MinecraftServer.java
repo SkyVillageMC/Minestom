@@ -8,6 +8,7 @@ import net.minestom.server.data.DataType;
 import net.minestom.server.data.SerializableData;
 import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalEventHandler;
+import net.minestom.server.event.server.ServerStartEvent;
 import net.minestom.server.exception.ExceptionManager;
 import net.minestom.server.extensions.Extension;
 import net.minestom.server.extensions.ExtensionManager;
@@ -18,6 +19,7 @@ import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.block.BlockManager;
 import net.minestom.server.instance.block.rule.BlockPlacementRule;
 import net.minestom.server.listener.manager.PacketListenerManager;
+import net.minestom.server.log.Logger;
 import net.minestom.server.monitoring.BenchmarkManager;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.network.PacketProcessor;
@@ -41,10 +43,9 @@ import net.minestom.server.world.DimensionTypeManager;
 import net.minestom.server.world.biomes.BiomeManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 
 /**
@@ -55,7 +56,7 @@ import java.net.InetSocketAddress;
  */
 public final class MinecraftServer {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(MinecraftServer.class);
+    public final static Logger LOGGER = new Logger("net.minestom.server.Main");
 
     public static final String VERSION_NAME = "1.17.1";
     public static final int PROTOCOL_VERSION = 756;
@@ -108,7 +109,7 @@ public final class MinecraftServer {
     private static AdvancementManager advancementManager;
     private static BossBarManager bossBarManager;
 
-    private static ExtensionManager extensionManager;
+    //private static ExtensionManager extensionManager;
 
     private static final GlobalEventHandler GLOBAL_EVENT_HANDLER = new GlobalEventHandler();
 
@@ -130,6 +131,8 @@ public final class MinecraftServer {
     private static Difficulty difficulty = Difficulty.NORMAL;
     private static TagManager tagManager;
 
+    private static long startTime = System.currentTimeMillis();
+
     public static MinecraftServer init() {
         if (minecraftServer != null) // don't init twice
             return minecraftServer;
@@ -137,7 +140,7 @@ public final class MinecraftServer {
         // Initialize the ExceptionManager at first
         exceptionManager = new ExceptionManager();
 
-        extensionManager = new ExtensionManager();
+        //extensionManager = new ExtensionManager();
 
         // warmup/force-init registries
         // without this line, registry types that are not loaded explicitly will have an internal empty registry in Registries
@@ -608,8 +611,8 @@ public final class MinecraftServer {
      * @return the extension manager
      */
     public static ExtensionManager getExtensionManager() {
-        checkInitStatus(extensionManager);
-        return extensionManager;
+        //checkInitStatus(extensionManager);
+        return null;
     }
 
     /**
@@ -680,7 +683,7 @@ public final class MinecraftServer {
             e.printStackTrace();
         }
 
-        if (extensionManager.shouldLoadOnStartup()) {
+        /*if (extensionManager.shouldLoadOnStartup()) {
             final long loadStartTime = System.nanoTime();
             // Load extensions
             extensionManager.loadExtensions();
@@ -693,19 +696,27 @@ public final class MinecraftServer {
             LOGGER.info("Extensions loaded in {}ms", loadTime);
         } else {
             LOGGER.warn("Extension loadOnStartup option is set to false, extensions are therefore neither loaded or initialized.");
-        }
+        }*/
 
         // Start server
         server.start();
 
         LOGGER.info("Minestom server started successfully.");
 
-        if (terminalEnabled) {
+        /*if (terminalEnabled) {
             MinestomTerminal.start();
-        }
+        }*/
 
         // Stop the server on SIGINT
         Runtime.getRuntime().addShutdownHook(new Thread(MinecraftServer::stopCleanly));
+
+        getGlobalEventHandler().callCancellable(new ServerStartEvent(), () -> {
+
+        });
+
+        LOGGER.info("Starting took {} ms", System.currentTimeMillis() - startTime);
+
+        LOGGER.info("Ram usage: {} Mb", ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1024 / 1024);
     }
 
     /**
@@ -715,14 +726,14 @@ public final class MinecraftServer {
         if (stopping) return;
         stopping = true;
         LOGGER.info("Stopping Minestom server.");
-        extensionManager.unloadAllExtensions();
+        //extensionManager.unloadAllExtensions();
         updateManager.stop();
         schedulerManager.shutdown();
         connectionManager.shutdown();
         server.stop();
         storageManager.getLoadedLocations().forEach(StorageLocation::close);
         LOGGER.info("Unloading all extensions.");
-        extensionManager.shutdown();
+        //extensionManager.shutdown();
         LOGGER.info("Shutting down all thread pools.");
         benchmarkManager.disable();
         MinestomTerminal.stop();

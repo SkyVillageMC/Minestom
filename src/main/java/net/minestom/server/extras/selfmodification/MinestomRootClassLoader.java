@@ -2,13 +2,12 @@ package net.minestom.server.extras.selfmodification;
 
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.extensions.ExtensionManager;
+import net.minestom.server.log.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +25,7 @@ import java.util.Set;
  */
 public class MinestomRootClassLoader extends HierarchyClassLoader {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(MinestomRootClassLoader.class);
+    public final static Logger LOGGER = new Logger(MinestomRootClassLoader.class.getName());
 
     private static volatile MinestomRootClassLoader INSTANCE;
 
@@ -128,18 +127,18 @@ public class MinestomRootClassLoader extends HierarchyClassLoader {
         try {
             // we do not load system classes by ourselves
             Class<?> systemClass = ClassLoader.getPlatformClassLoader().loadClass(name);
-            LOGGER.trace("System class: {}", systemClass);
+            //LOGGER.trace("System class: {}", systemClass);
             return systemClass;
         } catch (ClassNotFoundException e) {
             try {
                 if (isProtected(name)) {
-                    LOGGER.trace("Protected: {}", name);
+                    //LOGGER.trace("Protected: {}", name);
                     return super.loadClass(name, resolve);
                 }
 
                 return define(name, resolve);
             } catch (Exception ex) {
-                LOGGER.trace("Fail to load class, resorting to parent loader: " + name, ex);
+                //LOGGER.trace("Fail to load class, resorting to parent loader: " + name, ex);
                 // fail to load class, let parent load
                 // this forbids code modification, but at least it will load
                 return super.loadClass(name, resolve);
@@ -162,7 +161,7 @@ public class MinestomRootClassLoader extends HierarchyClassLoader {
         try {
             byte[] bytes = loadBytes(name, true);
             Class<?> defined = defineClass(name, bytes, 0, bytes.length);
-            LOGGER.trace("Loaded with code modifiers: {}", name);
+            //LOGGER.trace("Loaded with code modifiers: {}", name);
             if (resolve) {
                 resolveClass(defined);
             }
@@ -173,7 +172,7 @@ public class MinestomRootClassLoader extends HierarchyClassLoader {
             for (MinestomExtensionClassLoader subloader : children) {
                 try {
                     defined = subloader.loadClassAsChild(name, resolve);
-                    LOGGER.trace("Loaded from child {}: {}", subloader, name);
+                    //LOGGER.trace("Loaded from child {}: {}", subloader, name);
                     return defined;
                 } catch (ClassNotFoundException e1) {
                     // not found inside this child, move on to next
@@ -260,7 +259,7 @@ public class MinestomRootClassLoader extends HierarchyClassLoader {
                 };
                 node.accept(writer);
                 classBytecode = writer.toByteArray();
-                LOGGER.trace("Modified {}", name);
+                //LOGGER.trace("Modified {}", name);
             }
         }
         return classBytecode;

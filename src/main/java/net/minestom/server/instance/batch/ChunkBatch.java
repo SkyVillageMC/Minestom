@@ -8,13 +8,12 @@ import net.minestom.server.instance.Chunk;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.log.Logger;
 import net.minestom.server.utils.callback.OptionalCallback;
 import net.minestom.server.utils.chunk.ChunkCallback;
 import net.minestom.server.utils.chunk.ChunkUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -32,7 +31,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class ChunkBatch implements Batch<ChunkCallback> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChunkBatch.class);
+    private static final Logger LOGGER = new Logger("ChunkBatch");
 
     private final Int2ObjectMap<Block> blocks = new Int2ObjectOpenHashMap<>();
     // Available for other implementations to handle.

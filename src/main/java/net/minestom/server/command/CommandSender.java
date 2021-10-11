@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents something which can send commands to the server.
  * <p>
- * Main implementations are {@link Player} and {@link ConsoleSender}.
+ * net.minestom.server.Main implementations are {@link Player} and {@link ConsoleSender}.
  */
 public interface CommandSender extends PermissionHandler, Audience, TagHandler {
 

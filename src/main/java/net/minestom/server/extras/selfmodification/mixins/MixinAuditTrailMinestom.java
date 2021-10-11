@@ -1,8 +1,7 @@
 package net.minestom.server.extras.selfmodification.mixins;
 
 import net.minestom.server.MinecraftServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.minestom.server.log.Logger;
 import org.spongepowered.asm.service.IMixinAuditTrail;
 
 /**
@@ -10,20 +9,20 @@ import org.spongepowered.asm.service.IMixinAuditTrail;
  */
 public class MixinAuditTrailMinestom implements IMixinAuditTrail {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(MinecraftServer.class);
+    public final static Logger LOGGER = new Logger(MinecraftServer.class);
 
     @Override
     public void onApply(String className, String mixinName) {
-        LOGGER.trace("Applied mixin {} to class {}", mixinName, className);
+        LOGGER.debug("Applied mixin {} to class {}", mixinName, className);
     }
 
     @Override
     public void onPostProcess(String className) {
-        LOGGER.trace("Post processing {}", className);
+        LOGGER.debug("Post processing {}", className);
     }
 
     @Override
     public void onGenerate(String className, String generatorName) {
-        LOGGER.trace("Generating class {} via generator {}", className, generatorName);
+        LOGGER.debug("Generating class {} via generator {}", className, generatorName);
     }
 }

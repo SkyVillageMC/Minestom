@@ -5,13 +5,12 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.GlobalHandles;
 import net.minestom.server.event.player.PlayerPacketEvent;
 import net.minestom.server.listener.*;
+import net.minestom.server.log.Logger;
 import net.minestom.server.network.ConnectionManager;
 import net.minestom.server.network.packet.client.ClientPlayPacket;
 import net.minestom.server.network.packet.client.play.*;
 import net.minestom.server.network.packet.server.ServerPacket;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class PacketListenerManager {
 
-    public final static Logger LOGGER = LoggerFactory.getLogger(PacketListenerManager.class);
+    public final static Logger LOGGER = new Logger("PacketListenerManager");
     private static final ConnectionManager CONNECTION_MANAGER = MinecraftServer.getConnectionManager();
 
     private final Map<Class<? extends ClientPlayPacket>, PacketListenerConsumer> listeners = new ConcurrentHashMap<>();

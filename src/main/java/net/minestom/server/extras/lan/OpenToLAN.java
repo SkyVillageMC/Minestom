@@ -3,12 +3,11 @@ package net.minestom.server.extras.lan;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.EventDispatcher;
 import net.minestom.server.event.server.ServerListPingEvent;
+import net.minestom.server.log.Logger;
 import net.minestom.server.timer.Task;
 import net.minestom.server.utils.NetworkUtils;
 import net.minestom.server.utils.time.Cooldown;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -32,7 +31,7 @@ import static net.minestom.server.ping.ServerListPingType.OPEN_TO_LAN;
 public class OpenToLAN {
     private static final InetSocketAddress PING_ADDRESS = new InetSocketAddress("224.0.2.60", 4445);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenToLAN.class);
+    private static final Logger LOGGER = new Logger(OpenToLAN.class);
 
     private static volatile Cooldown eventCooldown;
     private static volatile DatagramSocket socket = null;
