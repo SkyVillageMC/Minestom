@@ -156,7 +156,7 @@ public class PlayerSocketConnection extends PlayerConnection {
                 break;
             } catch (DataFormatException e) {
                 MinecraftServer.getExceptionManager().handleException(e);
-                disconnect();
+                //disconnect();
                 return;
             }
         }

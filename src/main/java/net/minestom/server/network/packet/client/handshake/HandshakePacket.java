@@ -89,8 +89,8 @@ public class HandshakePacket implements ClientPreplayPacket {
                     socketConnection.UNSAFE_setBungeeUuid(playerUuid);
                     socketConnection.UNSAFE_setBungeeSkin(playerSkin);
                 } else {
-                    socketConnection.sendPacket(new LoginDisconnectPacket(INVALID_BUNGEE_FORWARDING));
-                    socketConnection.disconnect();
+                    //socketConnection.sendPacket(new LoginDisconnectPacket(INVALID_BUNGEE_FORWARDING));
+                    //socketConnection.disconnect();
                     return;
                 }
             } else {
@@ -113,8 +113,8 @@ public class HandshakePacket implements ClientPreplayPacket {
                     connection.setConnectionState(ConnectionState.LOGIN);
                 } else {
                     // Incorrect client version
-                    connection.sendPacket(new LoginDisconnectPacket(INVALID_VERSION_TEXT));
-                    connection.disconnect();
+                    //connection.sendPacket(new LoginDisconnectPacket(INVALID_VERSION_TEXT));
+                    //connection.disconnect();
                 }
                 break;
             default:

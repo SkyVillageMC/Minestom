@@ -14,7 +14,7 @@ final class StatisticTypeImpl implements StatisticType {
             });
 
     static StatisticType get(@NotNull String namespace) {
-        return CONTAINER.get(namespace);
+        return null;//CONTAINER.get(namespace);
     }
 
     static StatisticType getSafe(@NotNull String namespace) {

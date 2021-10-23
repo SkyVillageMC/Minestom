@@ -747,8 +747,8 @@ public abstract class Instance implements BlockGetter, BlockSetter, Tickable, Ta
         }
         // Time
         {
-            this.worldAge++;
-            this.time += timeRate;
+            //this.worldAge++;
+            //this.time += timeRate;
             // time needs to be sent to players
             if (timeUpdate != null && !Cooldown.hasCooldown(time, lastTimeUpdate, timeUpdate)) {
                 PacketUtils.sendGroupedPacket(getPlayers(), createTimePacket());

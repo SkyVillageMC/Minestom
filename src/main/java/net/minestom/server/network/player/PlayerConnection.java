@@ -89,6 +89,7 @@ public abstract class PlayerConnection {
      * @see #shouldSendPacket(ServerPacket)
      */
     public void sendPacket(@NotNull ServerPacket serverPacket) {
+//        System.out.println("Sending packet " + serverPacket.getId() + " to " + (this.player == null ? "disconnecting player" : this.player.getUsername()));
         this.sendPacket(serverPacket, false);
     }
 

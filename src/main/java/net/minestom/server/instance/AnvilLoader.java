@@ -1,5 +1,6 @@
 package net.minestom.server.instance;
 
+import net.minestom.server.Main;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.exception.ExceptionManager;
 import net.minestom.server.instance.block.Block;
@@ -30,18 +31,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AnvilLoader implements IChunkLoader {
     private final static Logger LOGGER = new Logger("AnvilLoader");
     private static final BlockManager BLOCK_MANAGER = MinecraftServer.getBlockManager();
-    private static final BiomeManager BIOME_MANAGER = MinecraftServer.getBiomeManager();
     private static final ExceptionManager EXCEPTION_MANAGER = MinecraftServer.getExceptionManager();
-    private static final Biome BIOME = Biome.PLAINS;
 
     private final Map<String, RegionFile> alreadyLoaded = new ConcurrentHashMap<>();
     private final Path path;
-    private final Path levelPath;
     private final Path regionPath;
+
+    private static final Biome[] biomes = new Biome[] {Main.SAVANNA };
 
     public AnvilLoader(@NotNull Path path) {
         this.path = path;
-        this.levelPath = path.resolve("level.dat");
         this.regionPath = path.resolve("region");
     }
 
@@ -51,25 +50,12 @@ public class AnvilLoader implements IChunkLoader {
 
     @Override
     public void loadInstance(@NotNull Instance instance) {
-        if (!Files.exists(levelPath)) {
-            return;
-        }
-        try (var reader = new NBTReader(Files.newInputStream(levelPath))) {
-            final NBTCompound tag = (NBTCompound) reader.read();
-            Files.copy(levelPath, path.resolve("level.dat_old"), StandardCopyOption.REPLACE_EXISTING);
-            instance.setTag(Tag.NBT, tag);
-        } catch (IOException | NBTException e) {
-            MinecraftServer.getExceptionManager().handleException(e);
-        }
+        instance.setTimeRate(0);
     }
 
     @Override
     public @NotNull CompletableFuture<@Nullable Chunk> loadChunk(@NotNull Instance instance, int chunkX, int chunkZ) {
-        //LOGGER.debug("Attempt loading at {} {}", chunkX, chunkZ);
-        if (!Files.exists(path)) {
-            // No world folder
-            return CompletableFuture.completedFuture(null);
-        }
+        LOGGER.debug("Attempt loading at {} {}", chunkX, chunkZ);
         try {
             return loadMCA(instance, chunkX, chunkZ);
         } catch (IOException | AnvilException e) {
@@ -86,22 +72,10 @@ public class AnvilLoader implements IChunkLoader {
         if (fileChunk == null)
             return CompletableFuture.completedFuture(null);
 
-        Biome[] biomes;
-        if (fileChunk.getGenerationStatus().compareTo(ChunkColumn.GenerationStatus.Biomes) > 0) {
-            int[] fileChunkBiomes = fileChunk.getBiomes();
-            biomes = new Biome[fileChunkBiomes.length];
-            for (int i = 0; i < fileChunkBiomes.length; i++) {
-                final int id = fileChunkBiomes[i];
-                biomes[i] = Objects.requireNonNullElse(BIOME_MANAGER.getById(id), BIOME);
-            }
-        } else {
-            biomes = new Biome[1024]; // TODO don't hardcode
-            Arrays.fill(biomes, BIOME);
-        }
         Chunk chunk = new DynamicChunk(instance, biomes, chunkX, chunkZ);
         // Blocks
         loadBlocks(chunk, fileChunk);
-        loadTileEntities(chunk, fileChunk);
+        //loadTileEntities(chunk, fileChunk);
         // Lights
         for (var chunkSection : fileChunk.getSections()) {
             Section section = chunk.getSection(chunkSection.getY());
@@ -187,16 +161,6 @@ public class AnvilLoader implements IChunkLoader {
 
     @Override
     public @NotNull CompletableFuture<Void> saveInstance(@NotNull Instance instance) {
-        final var nbt = instance.getTag(Tag.NBT);
-        if (nbt == null) {
-            // Instance has no data
-            return AsyncUtils.VOID_FUTURE;
-        }
-        try (NBTWriter writer = new NBTWriter(Files.newOutputStream(levelPath))) {
-            writer.writeNamed("", nbt);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return AsyncUtils.VOID_FUTURE;
     }
 

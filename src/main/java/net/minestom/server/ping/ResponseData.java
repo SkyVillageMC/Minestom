@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @see ServerListPingEvent
  */
 public class ResponseData {
-    private static final Component DEFAULT_DESCRIPTION = Component.text("Minestom Server");
+    private static final Component DEFAULT_DESCRIPTION = Component.text("Lobby Szerver");
 
     private final List<NamedAndIdentified> entries;
 
